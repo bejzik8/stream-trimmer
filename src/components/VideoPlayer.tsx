@@ -23,11 +23,35 @@ const VideoPlayer = ({ source }: VideoPlayerProps) => {
         videoPlayer.current.currentTime = 0
     }
 
+    const minusFiveSeconds = () => {
+        if (!videoPlayer.current) return
+
+        videoPlayer.current.currentTime -= 5
+    }
+
+    const plusFiveSeconds = () => {
+        if (!videoPlayer.current) return
+
+        videoPlayer.current.currentTime += 5
+    }
+
+    const testAPI = () => {
+        if (!videoPlayer.current) return
+
+        console.log('DURATION', videoPlayer.current.duration)
+        console.log('CURRENT TIME', videoPlayer.current.currentTime)
+        console.log('PLAYBACK RATE', videoPlayer.current.playbackRate)
+    }
+
     return <>
         <StyledVideo controls ref={videoPlayer}>
             <source src={source} />
         </StyledVideo>
         <ControlsContainer>
+            <Button
+                text='-5'
+                onClick={minusFiveSeconds}
+            />
             <Button
                 text='P'
                 onClick={playPauseVideo}
@@ -35,6 +59,14 @@ const VideoPlayer = ({ source }: VideoPlayerProps) => {
             <Button
                 text='S'
                 onClick={stopVideo}
+            />
+            <Button
+                text='+5'
+                onClick={plusFiveSeconds}
+            />
+            <Button
+                text='TEST'
+                onClick={testAPI}
             />
         </ControlsContainer>
     </>
