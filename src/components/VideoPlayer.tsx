@@ -4,7 +4,7 @@ import styled from 'styled-components'
 import Button from './Button'
 
 type VideoPlayerProps = {
-    source: string
+    source?: string
 }
 
 const VideoPlayer = ({ source }: VideoPlayerProps) => {
@@ -44,7 +44,7 @@ const VideoPlayer = ({ source }: VideoPlayerProps) => {
     }
 
     return <>
-        <StyledVideo controls ref={videoPlayer}>
+        <StyledVideo controls ref={videoPlayer} id='video-player'>
             <source src={source} />
         </StyledVideo>
         <ControlsContainer>
