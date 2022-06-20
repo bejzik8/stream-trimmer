@@ -1,7 +1,10 @@
 import { useRef, useEffect } from 'react'
 import styled from 'styled-components'
+import Hls from 'hls.js'
 
 import Button from './Button'
+
+const src = 'https://multiplatform-f.akamaihd.net/i/multi/will/bunny/big_buck_bunny_,640x360_400,640x360_700,640x360_1000,950x540_1500,.f4v.csmil/master.m3u8'
 
 type VideoPlayerProps = {
     source?: string
@@ -9,6 +12,28 @@ type VideoPlayerProps = {
 
 const VideoPlayer = ({ source }: VideoPlayerProps) => {
     const videoPlayer = useRef<null | HTMLMediaElement>(null)
+
+    useEffect(() => {
+        getHLS()
+    }, [videoPlayer.current])
+  
+    const getHLS = () => {
+      if (Hls.isSupported() && videoPlayer.current) {
+        const hls = new Hls()
+        console.log(hls)
+  
+        hls.attachMedia(videoPlayer.current)
+        hls.on(Hls.Events.MEDIA_ATTACHED, function () {
+          console.log('video and hls.js are now bound together !')
+          hls.loadSource(src)
+          hls.on(Hls.Events.MANIFEST_PARSED, function (event, data) {
+            console.log(
+              'manifest loaded, found ' + data.levels.length + ' quality level'
+            )
+          })
+        })
+      }
+    }
 
     const playPauseVideo = () => {
         if (!videoPlayer.current) return
@@ -66,6 +91,14 @@ const VideoPlayer = ({ source }: VideoPlayerProps) => {
             />
             <Button
                 text='TEST'
+                onClick={testAPI}
+            />
+            <Button
+                text='REC B'
+                onClick={testAPI}
+            />
+            <Button
+                text='REC E'
                 onClick={testAPI}
             />
         </ControlsContainer>

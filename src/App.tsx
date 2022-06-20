@@ -1,13 +1,9 @@
-import { useEffect } from 'react'
 import styled from 'styled-components'
-import Hls from 'hls.js'
 // import { Parser } from 'm3u8-parser'
 
 import VideoPlayer from './components/VideoPlayer'
 
 // import myPlst from './assets/arena-stream/20220616184245_arenahd.m3u8'
-
-const src = 'https://multiplatform-f.akamaihd.net/i/multi/will/bunny/big_buck_bunny_,640x360_400,640x360_700,640x360_1000,950x540_1500,.f4v.csmil/master.m3u8'
 
 // var manifest = [
 //   '#EXTM3U',
@@ -28,33 +24,6 @@ const src = 'https://multiplatform-f.akamaihd.net/i/multi/will/bunny/big_buck_bu
 // var parsedManifest = parser.manifest
 
 function App() {
-  useEffect(() => {
-    getHLS()
-  }, [])
-
-  const getHLS = () => {
-    if (Hls.isSupported()) {
-      console.log('HELLO HLS JS')
-
-      var video: any = document.getElementById('video-player')
-      console.log(video)
-
-      const hls = new Hls()
-      console.log(hls)
-
-      hls.attachMedia(video)
-      hls.on(Hls.Events.MEDIA_ATTACHED, function () {
-        console.log('video and hls.js are now bound together !')
-        hls.loadSource(src)
-        hls.on(Hls.Events.MANIFEST_PARSED, function (event, data) {
-          console.log(
-            'manifest loaded, found ' + data.levels.length + ' quality level'
-          )
-        })
-      })
-    }
-  }
-
   return (
     <Container>
       <VideoPlayer />
