@@ -1,4 +1,4 @@
-import { useRef, useEffect } from 'react'
+import { useRef, useEffect, useState } from 'react'
 import styled from 'styled-components'
 import Hls from 'hls.js'
 
@@ -10,8 +10,12 @@ type VideoPlayerProps = {
     source?: string
 }
 
+interface HTMLMediaElementWithCaputreStream extends HTMLMediaElement {
+    captureStream(): MediaStream
+}
+
 const VideoPlayer = ({ source }: VideoPlayerProps) => {
-    const videoPlayer = useRef<null | HTMLMediaElement>(null)
+    const videoPlayer = useRef<null | HTMLMediaElementWithCaputreStream>(null)
 
     useEffect(() => {
         getHLS()
@@ -68,6 +72,46 @@ const VideoPlayer = ({ source }: VideoPlayerProps) => {
         console.log('PLAYBACK RATE', videoPlayer.current.playbackRate)
     }
 
+    const startRecording = () => {
+        if (!videoPlayer.current) return
+
+        const recordedChunks: any[] = []
+
+        const stream = videoPlayer.current.captureStream()
+
+        console.log(stream)
+
+        const newMediaRecorder = new MediaRecorder(stream)
+
+        const download = () => {
+            const blob = new Blob(recordedChunks)
+            const url = URL.createObjectURL(blob)
+            const a = document.createElement('a')
+            document.body.appendChild(a)
+            a.style.cssText = 'display: none'
+            a.href = url
+            a.download = 'test.webm'
+            a.click()
+            window.URL.revokeObjectURL(url)
+        }
+
+        const handleDataAvailable = event => {
+            if (event.data.size > 0) {
+                recordedChunks.push(event.data)
+                download()
+            }
+        }
+        
+        newMediaRecorder.ondataavailable = handleDataAvailable
+        newMediaRecorder.start()
+
+        console.log(newMediaRecorder)
+
+        setTimeout(() => {
+            newMediaRecorder.stop()
+        }, 5000)
+    }
+
     return <>
         <StyledVideo controls ref={videoPlayer} id='video-player'>
             <source src={source} />
@@ -95,7 +139,7 @@ const VideoPlayer = ({ source }: VideoPlayerProps) => {
             />
             <Button
                 text='REC B'
-                onClick={testAPI}
+                onClick={startRecording}
             />
             <Button
                 text='REC E'
